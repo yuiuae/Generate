@@ -10,10 +10,9 @@ documentation and does not have any functionality:)
 package handlers
 
 import (
+	"Generate/internal/db"
 	"fmt"
 	"net/http"
-
-	"github.com/yuiuae/Generate/internal/db"
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {
@@ -32,6 +31,14 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(msg))
 }
 
+// GetUserAll lists all existing users
+//
+//	@Summary      User List
+//	@Description  get users
+//	@Tags         users
+//	@Produce      json
+//	@Success      200
+//	@Router       /users [get]
 func GetUserAll(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("TEST")
 	if r.Method != "GET" {

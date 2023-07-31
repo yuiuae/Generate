@@ -10,6 +10,8 @@ documentation and does not have any functionality:)
 package handlers
 
 import (
+	"Generate/internal/db"
+	"Generate/pkg/hasher"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -19,9 +21,6 @@ import (
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
-
-	"github.com/yuiuae/Generate/internal/db"
-	"github.com/yuiuae/Generate/pkg/hasher"
 )
 
 // calls per hour allowed by the user
@@ -57,7 +56,18 @@ type CrResponse struct {
 	UserName string `json:"username"`
 }
 
-// Create new use and add to user table
+// CreateUser
+//
+// @Summary      Creat user
+// @Description  post user
+// @Tags         users
+// @Param	     user	body		CrRequest	true	"Login user"
+// @Accept       json
+// @Produce      json
+// @Success		 200	{object}	CrResponse
+// @Failure      400
+// @Failure      500
+// @Router       /users [post]
 func UserCreate(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		errorlog(w, "Only POST method allowed ", http.StatusBadRequest)
@@ -92,7 +102,10 @@ func UserCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Generate UUID
-	uid, err := uuid.NewRandom()
+	// uid, err := uuid.NewRandom()
+	// uid, err := generateUUID()
+	var u StructUUIDProcessor
+	uid, err := StructUUIDProcessor.GenerateUUID(u)
 	if err != nil {
 		errorlog(w, "Internal Server Error (UUID error)", http.StatusInternalServerError)
 		return
@@ -115,6 +128,19 @@ func UserCreate(w http.ResponseWriter, r *http.Request) {
 	// usersTable[req.UserName] = &UserInfo1{hashedPassword, uid.String(), ""}
 }
 
+type UUIDProcessor interface {
+	generateUUID() (uuid.UUID, error)
+}
+type StructUUIDProcessor struct{}
+
+func (s StructUUIDProcessor) GenerateUUID() (uuid.UUID, error) {
+	return uuid.NewRandom()
+}
+
+// func generateUUID() (uuid.UUID, error) {
+// 	return uuid.NewRandom()
+// }
+
 // Create a struct that models the structure for a user login
 // Request
 type LogRequest struct {
@@ -127,7 +153,18 @@ type LogResponse struct {
 	URL string `json:"URL"`
 }
 
-// Check username and passoword in user table
+// UserLogin
+//
+// @Summary      Login user
+// @Description  Provide login token to the chat service
+// @Tags         users
+// @Param	     user	body		CrRequest	true	"Add user"
+// @Accept       json
+// @Produce      json
+// @Success		 201	{object}	LogResponse
+// @Failure      400
+// @Failure      500
+// @Router       /login [post]
 func UserLogin(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		errorlog(w, "Only POST method allowed", http.StatusBadRequest)

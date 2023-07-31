@@ -1,15 +1,14 @@
 package db
 
 import (
+	"Generate/internal/conf"
+	"Generate/internal/structs"
+	"Generate/pkg/hasher"
 	"database/sql"
 	"errors"
 	"fmt"
 	"net/http"
 	"sync"
-
-	"github.com/yuiuae/Generate/internal/conf"
-	"github.com/yuiuae/Generate/internal/structs"
-	"github.com/yuiuae/Generate/pkg/hasher"
 
 	_ "github.com/go-sql-driver/mysql"
 )

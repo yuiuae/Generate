@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"Generate/internal/db"
 	"fmt"
 	"log"
 	"net/http"
@@ -8,7 +9,6 @@ import (
 
 	"github.com/golang-jwt/jwt"
 	"github.com/gorilla/websocket"
-	"github.com/yuiuae/Generate/internal/db"
 )
 
 var upgrader = websocket.Upgrader{}
